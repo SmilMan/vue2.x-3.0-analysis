@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src='./reactivity.global.js'></script>
+    <script>
+        let { stop,shallowRef,ref, reactive, effect, readonly, toRefs, computed } = VueReactivity
+        let obj = reactive({ name: 'gavin', age: 1 })
+        // let obj = reactive([1,2,3])
+        // obj.age = 9
+        // let data = shallowRef({name:'gavin'})
+        // console.log(data)
+        // let arr = readonly(obj)
+        let e = effect(() => {
+            console.log("effect", obj.name)
+        })
+        // stop(e)
+        obj.name = 'sss'
+        // let e = effect(() => {
+        //     console.log('fee', obj.name)
+        // })
+        let some = computed(() => {
+            return obj.age + 1
+        })
+
+        obj.age = 3
+        console.log(some)
+        // let toR = toRefs(obj)
+        // console.log(toR)
+        // let {name, age} = obj
+        // console.log(obj)
+        // console.log(name)
+        // console.log(age)
+        // // let {"0":one, "1":tow} = toR
+        // // console.log(one)
+
+
+        // let a = ref({name: 1})
+        // console.log(a.value)
+
+        // a.value = 9
+
+        // console.log(a)
+
+        // setTimeout(() => {
+        //     obj.age = 9
+        // }, 1000);
+
+
+    </script>
+</body>
+
+</html>

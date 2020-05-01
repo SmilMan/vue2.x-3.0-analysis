@@ -57,9 +57,11 @@ export function effect<T = any>(
   if (isEffect(fn)) {
     fn = fn.raw
   }
+  //创建一个effect函数返回，
+  //effect 上面挂载了很多的属性：_isEffect , active, raw, deps, options等
   const effect = createReactiveEffect(fn, options)
-  if (!options.lazy) {
-    effect()
+  if (!options.lazy) {   //判断是否立即执行，默认为false，如果配置懒执行 lazy = true，初始化时就不会触发
+    effect()   //执行
   }
   return effect
 }
@@ -79,15 +81,16 @@ function createReactiveEffect<T = any>(
   options: ReactiveEffectOptions
 ): ReactiveEffect<T> {
   const effect = function reactiveEffect(...args: unknown[]): unknown {
-    if (!effect.active) {
+    if (!effect.active) {  // ？
       return options.scheduler ? undefined : fn(...args)
     }
     if (!effectStack.includes(effect)) {
-      cleanup(effect)
+      cleanup(effect)    //每次都重新。清空effect上的deps。为下面新的重新接受做准备
       try {
-        enableTracking()
-        effectStack.push(effect)
-        activeEffect = effect
+        enableTracking()   //能过添加依赖，track里面就是更具相应的响应式属性，添加依赖的句柄函数
+                          //当数据变化时，在对象的set里调用trigger，根据响应的属性，去触发依赖的回调。
+        effectStack.push(effect) //将该句柄函数存起来。如果有涉及响应式的监听，通过这里获取函数，去添加deps
+        activeEffect = effect  // activeEffect.deps.push(dep); 在track里使用，将回调添加到deps上。
         return fn(...args)
       } finally {
         effectStack.pop()
